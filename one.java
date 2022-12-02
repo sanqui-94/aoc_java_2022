@@ -1,30 +1,32 @@
-import java.util.Objects;
-import java.util.Scanner;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class one {
-    static int greatestCalories = 0;
-    static int currentCount = 0;
 
+    public static void main(String[] args) throws IOException {
+        try (Stream<String> stream = Files.lines(Paths.get("./utils/input.txt"))) {
+            var lambdaContext = new Object() {
+                int currentCount = 0;
+                List<Integer> greatestCalories = new ArrayList<>();
+            };
 
-    public static void main(String[] args) {
-//        System.out.println("Hey");
-        Scanner scanner = new Scanner(System.in);
-        String line = "";
-        while (!Objects.isNull(line = scanner.nextLine())) {
-
-//            System.out.println("line: " + line);
-            if (line.equals("bye")) break;
-            int value = 0;
-            if (line.isEmpty() || line.equals("\n") || line.length() == 0) {
-                if (currentCount > greatestCalories) {
-                    greatestCalories = currentCount;
-                    currentCount = 0;
+            stream.forEach(line -> {
+                if (line.isEmpty()) {
+                    lambdaContext.greatestCalories.add(lambdaContext.currentCount);
+                    lambdaContext.currentCount = 0;
+                } else {
+                    lambdaContext.currentCount += Integer.parseInt(line);
                 }
-            } else {
-                value = Integer.parseInt(line);
-                currentCount += value;
-            }
+            });
+
+            Collections.sort(lambdaContext.greatestCalories, Collections.reverseOrder());
+            Integer sum = lambdaContext.greatestCalories.get(0) + lambdaContext.greatestCalories.get(1) + lambdaContext.greatestCalories.get(2);
+            System.out.println(sum);
         }
-        System.out.println(greatestCalories);
     }
 }
